@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .input-group {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            font-weight: bold;
+            margin-right: 30px;
+        }
+
+        .input-group input[type="text"] {
+            /* flex-grow: 1; */
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .checkbox-group label {
+            margin-left: 5px;
+        }
+
+        .btn {
+            margin-top: 20px;
+            background-color: #007BFF;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .response{
+            width: 18rem;
+            height: 18rem;
+            background-color: #ccc;
+           display: flex;
+           flex-direction: column;
+           justify-content: space-around;
+           position: absolute;
+           align-items: center;
+           visibility: hidden;
+           
+           
+        }
+
+        .btncross{
+            position: absolute;
+            left: 0%;
+            top: 0%;
+
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>Weather App</h1>
+        <div class="input-group">
+            <label for="countryCode">Country Code:</label>
+            <input type="text" id="countryCode" placeholder="Enter Country Code" required>
+        </div>
+        <div class="input-group">
+            <label for="postCode">Post Code:</label>
+            <input type="text" id="postCode" placeholder="Enter Post Code" required>
+        </div>
+        <div class="checkbox-group">
+            <input type="checkbox" id="openLocation">
+            <label for="openLocation">Open My Location</label>
+        </div>
+        <button class="btn" id="getLocationButton">Get Weather</button>
+    </div>
+
+
+    <div class="response">
+     <div class="main"></div>
+     <div class="description"></div>
+     <div class="maxtemp"></div>
+     <div class="mintemp"></div>
+     <button class="btncross">X</button>
+    </div>
+
+
+    <script>
+        const getLocationButton = document.getElementById('getLocationButton');
+        const openLocationCheckbox = document.getElementById('openLocation');
+        const responsebox=document.querySelector(".response")
+        const main=document.querySelector(".main")
+        const description=document.querySelector(".description")
+        const maxtemp=document.querySelector(".maxtemp")
+        const mintemp=document.querySelector(".mintemp")
+
+
+
+
+        document.querySelector(".btncross").addEventListener("click",()=>{
+            responsebox.style.visibility="hidden";
+
+        })
+
+        
+
+        function updateInputRequirements() {
+            const openLocation = openLocationCheckbox.checked;
+            countryCodeInput.required = !openLocation;
+            postCodeInput.required = !openLocation;
+        }
+
+
+        getLocationButton.addEventListener('click', (event) => {
+            event.preventDefault();
+            const countryCodeInput = document.getElementById('countryCode').value;
+            const postCodeInput = document.getElementById('postCode').value;
+
+            const openLocation = openLocationCheckbox.checked;
+            if (openLocation) {
+                if ('geolocation' in navigator) {
+
+                    navigator.geolocation.getCurrentPosition(function (position) {
+
+                        const latitude = position.coords.latitude;
+                        const longitude = position.coords.longitude;
+                
+                    var requestOptions = {
+                        method: 'GET',
+                        redirect: 'follow'
+                    };
+                    fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&appid=8ba9eeec383aee58750f068105dd59db`,requestOptions).then(response => response.json())
+                        .then(result => {
+                        main.innerHTML=`Weather: ${result.weather[0].main}`
+                        description.innerHTML=`Description: ${result.weather[0].description}`
+                        maxtemp.innerHTML=`MaxTemp: ${result.main.temp_max}`
+                        mintemp.innerHTML=`MinTemp: ${result.main.temp_min}`
+                        responsebox.style.visibility="visible"
+                    })
+                        .catch(error => console.log('error', error));
+                
+                        
+                        
+
+
+                    });
+                } else {
+                    // Geolocation is not available in this browser
+                    alert('Geolocation is not supported in your browser.');
+                }
+            } else {
+
+                if (countryCodeInput === "" || postCodeInput === "") {
+                    alert("Enter both the values");
+                } else {
+                    var requestOptions = {
+                        method: 'GET',
+                        redirect: 'follow'
+                    };
+                    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${countryCodeInput},${postCodeInput}&appid=8ba9eeec383aee58750f068105dd59db`,requestOptions).then(response => response.json())
+                        .then(result => {
+                            main.innerHTML=`Weather: ${result.weather[0].main}`
+                        description.innerHTML=`Description: ${result.weather[0].description}`
+                        maxtemp.innerHTML=`MaxTemp: ${result.main.temp_max}`
+                        mintemp.innerHTML=`MinTemp: ${result.main.temp_min}`
+                        responsebox.style.visibility="visible"
+                        })
+                        .catch(error => {
+                        main.innerHTML="Please enter the correct details";
+                        responsebox.style.visibility="visible"
+                        console.log('error', error)});
+                }
+
+            }
+
+        });
+    </script>
+</body>
+
+</html>
