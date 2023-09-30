@@ -122,8 +122,8 @@
         const responsebox=document.querySelector(".response")
         const main=document.querySelector(".main")
         const description=document.querySelector(".description")
-        const maxtemp=document.querySelector(".maxtemp")
-        const mintemp=document.querySelector(".mintemp")
+        const maxTemp=document.querySelector(".maxTemp")
+        const minTemp=document.querySelector(".minTemp")
 
 
 
@@ -155,6 +155,8 @@
 
                         const latitude = position.coords.latitude;
                         const longitude = position.coords.longitude;
+
+                        console.log(latitude,longitude)
                 
                     var requestOptions = {
                         method: 'GET',
@@ -164,8 +166,8 @@
                         .then(result => {
                         main.innerHTML=`Weather: ${result.weather[0].main}`
                         description.innerHTML=`Description: ${result.weather[0].description}`
-                        maxtemp.innerHTML=`MaxTemp: ${result.main.temp_max}`
-                        mintemp.innerHTML=`MinTemp: ${result.main.temp_min}`
+                        maxTemp.innerHTML=`maxTemp: ${result.main.temp_max}`
+                        minTemp.innerHTML=`minTemp: ${result.main.temp_min}`
                         responsebox.style.visibility="visible"
                     })
                         .catch(error => console.log('error', error));
@@ -192,8 +194,8 @@
                         .then(result => {
                             main.innerHTML=`Weather: ${result.weather[0].main}`
                         description.innerHTML=`Description: ${result.weather[0].description}`
-                        maxtemp.innerHTML=`MaxTemp: ${result.main.temp_max}`
-                        mintemp.innerHTML=`MinTemp: ${result.main.temp_min}`
+                        maxTemp.innerHTML=`maxTemp: ${result.main.temp_max}`
+                        minTemp.innerHTML=`minTemp: ${result.main.temp_min}`
                         responsebox.style.visibility="visible"
                         })
                         .catch(error => {
